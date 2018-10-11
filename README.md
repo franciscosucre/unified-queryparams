@@ -61,3 +61,75 @@ The sintax is very similar to elastic search. There are 3 types of filters:
 - **getFields():** Obtains and parses the fields parameter into the appropiate query format.
 
 - **getDefaultOperator():** Obtains and parses the defaultOperator parameter into the appropiate query format.
+
+# **ElasticSearchUriQueryParams**
+----------
+
+Implementation of the CRAF queryparams processing for Elastic Search
+Uri Api.
+
+As this class is aimed for the Elastic Search Uri Search Api
+it is recommended to read the Api's documentation.
+
+https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
+
+**Methods**
+----------
+
+- **getSize():** Alias for getLimit(). 
+
+- **getSource():** Alias for getFields().
+
+- **getFrom():** Alias for getSkip().
+
+- **getFilter():** Obtains and parses the filter parameter into the appropiate query format.
+
+- **getQuerystring():** Returns the fully formed and formatted Elastic Search Uri queryparam
+
+**Example**
+----------
+
+```javascript
+const queryParams = new ElasticSearchUriQueryParams(req.query),
+       querystring = queryParams.getQuerystring(),
+       response = await promiseHttp.get({
+         hostname: host,
+         path: `/opal/${type}/_search${querystring}`,
+         port: port,
+       }),
+       objects = response.hits.hits.map((hit) => {
+         return hit._source;
+       });
+```
+
+**MongoDBQueryParams**
+----------
+Implementation of the CRAF queryparams processing for the MongoDB driver.
+
+As this class is aimed for the MongoDB driver it is recommended to read the Api's documentation.
+
+http://mongodb.github.io/node-mongodb-native/3.1/api/index.html
+
+**Methods**
+----------
+
+- **mapToMongoOperator():** Returns the corresponding mongodb operator based on the querystring operator
+
+- **mapToMongoSort():** Returns the corresponding mongodb sort direction value based on the querystring.
+
+- **getQuery():** Obtains the filter to be passed to the mongodb query.
+
+- **getProjection():**  Alias for getFields().
+
+- **getQueryOptions():** Returns the fully formed query options to be passed to mongoDB
+
+**Example**
+----------
+
+```javascript
+const queryParams = new MongoDBQueryParams(req.query),
+       query = queryParams.getQuery(),
+       queryOptions = queryParams.getQueryOptions(),
+       mongodb = new MongoLeroyDriver(servers, database, options),
+       objects = await mongodb.find(collectionName, query, queryOptions);
+```
