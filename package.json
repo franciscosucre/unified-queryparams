@@ -8,5 +8,17 @@
     "url": "https://github.com/franciscosucre/unified-queryparams"
   },
   "author": "franciscojsucreg@gmail.com",
-  "dependencies": {}
+  "dependencies": {},
+  "keywords": [
+    "queryparam",
+    "queryparams",
+    "params",
+    "param",
+    "mongodb",
+    "mongo",
+    "elastic",
+    "elasticsearch",
+    "elastic-search",
+    "database"
+  ]
 }
