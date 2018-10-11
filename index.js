@@ -26,7 +26,7 @@ class QueryParams {
      * @memberof QueryParams
      */
     get filterRegExp() {
-        return /^([a-zA-Z_0-9]+):(>|>=|<|<=){0,1}([a-zA-Z0-9]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
+        return /^([a-zA-Z_0-9]+):(>|>=|<|<=|==|!=){0,1}([a-zA-Z0-9@.]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
     }
 
     /**
@@ -309,6 +309,10 @@ class MongoDBQueryParams extends QueryParams {
                 return '$lt';
             case '<=':
                 return '$lte';
+            case '==':
+                return '$eq';
+            case '!=':
+                return '$neq';
         }
     }
 
@@ -347,7 +351,7 @@ class MongoDBQueryParams extends QueryParams {
             if (rawSort.trim() != '') {
                 sortElements = rawSort.split(' ');
             }
-            return sortElements.reduce((sort, current, index, array) => {
+            return sortElements.reduce((sort, current) => {
                 const result = this.sortRegExp.exec(current);
                 if (!result) {
                     throw new InvalidQueryParamException('sort', rawSort);
@@ -380,7 +384,7 @@ class MongoDBQueryParams extends QueryParams {
             if (rawFilter.trim() != '') {
                 filterElements = rawFilter.split(' ');
             }
-            return filterElements.reduce((filter, current, index, array) => {
+            return filterElements.reduce((filter, current) => {
                 /* We use a regular expression to obtain the parts of our order */
                 var result = this.filterRegExp.exec(current);
                 if (!result) {
@@ -400,8 +404,11 @@ class MongoDBQueryParams extends QueryParams {
                     }
                 } else if (result.length == 3) {
                     /* CASE 2: Exact match query */
-                    const field = result[1],
+                    let field = result[1],
                         value = result[2];
+                    if (typeof value === 'string') {
+                        value = new RegExp(value, 'i')
+                    }
                     filter[field] = value;
                 } else if (result.length == 4) {
                     /* CASE 3: Operator */
@@ -420,7 +427,7 @@ class MongoDBQueryParams extends QueryParams {
         }
     }
 
-    getProjection(){
+    getProjection() {
         const projection = this.getFields();
         return projection.length > 0 ? projection : null;
     }
