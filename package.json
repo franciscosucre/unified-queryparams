@@ -1,0 +1,12 @@
+{
+  "name": "unified-queryparams",
+  "version": "0.1.0",
+  "description": "Unique Queryparams sintax (Inspired in Elastic Search) that creates queries Elastic Search and MongoDB",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/franciscosucre/unified-queryparams"
+  },
+  "author": "franciscojsucreg@gmail.com",
+  "dependencies": {}
+}
