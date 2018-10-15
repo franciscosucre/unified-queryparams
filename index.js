@@ -1,5 +1,6 @@
 const InvalidQueryParamException = require('./exceptions/InvalidQueryParamException'),
-    assert = require('assert');
+    assert = require('assert'),
+    querystring = require('querystring');
 
 /**
  * Base implementation of the CRAF queryparams processing. It is inteded to be used as
@@ -16,7 +17,12 @@ class QueryParams {
      * @memberof QueryParams
      */
     constructor(rawData = {}) {
-        this.rawData = rawData;
+        if (typeof rawData === 'string') {
+            this.rawData = querystring(rawData);
+        } else {
+            this.rawData = rawData;
+        }
+
     }
 
     /**
@@ -290,6 +296,14 @@ class ElasticSearchUriQueryParams extends QueryParams {
  * @extends {QueryParams}
  */
 class MongoDBQueryParams extends QueryParams {
+    constructor(params) {
+        super(params);
+        this.sort = this.getSort();
+        this.skip = this.getSkip();
+        this.limit = this.getLimit();
+        this.query = this.getQuery();
+        this.select = this.getFields();
+    }
 
     /**
      * Returns the corresponding mongodb operator based on the
