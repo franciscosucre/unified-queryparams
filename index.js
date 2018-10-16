@@ -147,7 +147,14 @@ class QueryParams {
  * @extends {QueryParams}
  */
 class ElasticSearchUriQueryParams extends QueryParams {
-
+    constructor(params) {
+        super(params);
+        this.sort = this.getSort();
+        this.skip = this.getFrom();
+        this.limit = this.getSize();
+        this.filter = this.getFilter();
+        this.fields = this.getSource();
+    }
     /**
      * Alias for the getLimit method. Made for readability purposes so
      * it is more similar to the Elastic Search Uri Search Api
@@ -242,12 +249,32 @@ class ElasticSearchUriQueryParams extends QueryParams {
             }
             return filterElements.reduce((filter, current, index, array) => {
                 /* We use a regular expression to obtain the parts of our order */
-                const matches = this.filterRegExp.test(current);
-                if (!matches) {
+                var result = this.filterRegExp.exec(current);
+                if (!result) {
                     throw new InvalidQueryParamException('filter', rawFilter);
                 }
-                /* We add the new parameter tu  */
-                filter += `${current}`
+                /* Exec returns undefined results sometimes so we clean them */
+                result = result.filter((value) => value != null)
+                if (result.length == 2) {
+                    const field = result[1];
+                    filter += `${field}`;
+                } else if (result.length == 3) {
+                    const field = result[1],
+                        value = result[2];
+                    filter += `${field}:${value}`;
+                } else if (result.length == 4) {
+                    /* CASE 3: Operator */
+                    const field = result[1],
+                        operator = result[2],
+                        value = result[3];
+                    if (operator === '==') {
+                        filter += `${field}:${value}`;
+                    } else if (operator === '!=') {
+                        filter += `!(${field}:${value})`;
+                    } else {
+                        filter += `${field}:${operator}${value}`;
+                    }
+                }
                 if (index < array.length - 1) {
                     filter += " "
                 }
@@ -423,7 +450,7 @@ class MongoDBQueryParams extends QueryParams {
                         value = result[2],
                         isInt = !isNaN(parseInt(value)),
                         isFloat = !isNaN(parseFloat(value)),
-                        isDate =  !isNaN(Date.parse(value)) ;
+                        isDate = !isNaN(Date.parse(value));
                     if (!isInt && !isFloat && !isDate) {
                         value = new RegExp(value, 'i')
                     }
