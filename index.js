@@ -32,7 +32,7 @@ class QueryParams {
      * @memberof QueryParams
      */
     get filterRegExp() {
-        return /^([a-zA-Z_0-9]+):(>|>=|<|<=|==|!=){0,1}([a-zA-Z0-9@.]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
+        return /^([a-zA-Z_0-9]+):(>|>=|<|<=|==|!=){0,1}([a-zA-Z0-9@.\-:]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
     }
 
     /**
@@ -301,8 +301,9 @@ class MongoDBQueryParams extends QueryParams {
         this.sort = this.getSort();
         this.skip = this.getSkip();
         this.limit = this.getLimit();
+        this.filter = this.getQuery();
         this.query = this.getQuery();
-        this.select = this.getFields();
+        this.fields = this.getFields();
     }
 
     /**
@@ -419,8 +420,11 @@ class MongoDBQueryParams extends QueryParams {
                 } else if (result.length == 3) {
                     /* CASE 2: Exact match query */
                     let field = result[1],
-                        value = result[2];
-                    if (typeof value === 'string') {
+                        value = result[2],
+                        isInt = !isNaN(parseInt(value)),
+                        isFloat = !isNaN(parseFloat(value)),
+                        isDate =  !isNaN(Date.parse(value)) ;
+                    if (!isInt && !isFloat && !isDate) {
                         value = new RegExp(value, 'i')
                     }
                     filter[field] = value;
