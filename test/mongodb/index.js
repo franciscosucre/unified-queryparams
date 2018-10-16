@@ -168,6 +168,15 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.filter.created_at.should.be.eql('2018-10-04T09:21:36.676Z');
         });
 
+        it('should accept a search with the ":" and a nested field', async function () {
+            const mongoDbQueryParams = new MongoDBQueryParams({
+                filter: 'name.bar:boo'
+            });
+            mongoDbQueryParams.should.have.property('filter');
+            mongoDbQueryParams.filter.should.have.property('name.bar');
+            mongoDbQueryParams.filter['name.bar'].should.be.eql(/boo/i);
+        });
+
         it('should create a $eq search with the ":==" and a value', async function () {
             const mongoDbQueryParams = new MongoDBQueryParams({
                 filter: 'number:==4'

@@ -32,7 +32,7 @@ class QueryParams {
      * @memberof QueryParams
      */
     get filterRegExp() {
-        return /^([a-zA-Z_0-9]+):(>|>=|<|<=|==|!=){0,1}([a-zA-Z0-9@.\-:]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
+        return /^([a-zA-Z0-9@._]+):(>|>=|<|<=|==|!=){0,1}([a-zA-Z0-9@.\-:_]+)|(\+|-){0,1}([a-zA-Z_0-9]+)$/;
     }
 
     /**

@@ -141,6 +141,14 @@ describe('ElasticSearchUriQueryParams', () => {
             elasticSearchUriQueryParams.filter.should.be.eql('name:boo');
         });
 
+        it('should accept a search with the ":" and a nested field', async function () {
+            const elasticSearchUriQueryParams = new ElasticSearchUriQueryParams({
+                filter: 'name.bar:boo'
+            });
+            elasticSearchUriQueryParams.should.have.property('filter');
+            elasticSearchUriQueryParams.filter.should.be.eql('name.bar:boo');
+        });
+
         it('should create a $eq search with the ":==" and a value', async function () {
             const elasticSearchUriQueryParams = new ElasticSearchUriQueryParams({
                 filter: 'number:==4'
