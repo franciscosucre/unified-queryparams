@@ -1,6 +1,6 @@
 # **unified-queryparams**
 
-Dependency-less http methods for pure nodejs. The motive for this project was for have a simple logger with elastic search without depending on any driver o special software.
+Querystring parser that follows a simple ruleset to form querystrings and them builds the apropiate queries for different databases.
 
 **How to install**
 ----------
