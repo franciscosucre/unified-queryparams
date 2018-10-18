@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "description": "Unique Queryparams sintax (Inspired in Elastic Search) that creates queries Elastic Search and MongoDB",
   "scripts": {
-    "test": "set NODE_ENV=test&& mocha -u tdd --timeout 999999 --colors test/**/*.js"
+    "test": "set NODE_ENV=test&& mocha"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,9 @@
 let chai = require('chai'),
     chaiHttp = require('chai-http'),
-    InvalidQueryParamException = require('../../exceptions/InvalidQueryParamException'),
+    InvalidQueryParamException = require('../exceptions/InvalidQueryParamException'),
     {
         MongoDBQueryParams
-    } = require('../../index');
+    } = require('../index');
 
 chai.should();
 chai.use(chaiHttp);
