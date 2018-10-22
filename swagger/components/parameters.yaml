@@ -1,0 +1,84 @@
+parameters:
+  buShortLabel:
+    name: bu
+    description: Business unit id
+    in: path
+    required: true
+    schema:
+      type: integer
+    example: boo foo:fighter for:>=354 
+  code: 
+    name: code
+    description: Store unique identification code
+    in: path
+    required: true
+    schema:
+      type: integer
+    example: boo foo:fighter for:>=354 
+  filter:
+    name: filter
+    description: Filter conditions for the search
+    in: query
+    required: false
+    schema:
+      type: string
+      example: boo foo:fighter for:>=354 
+
+  fields:
+    name: fields
+    description: The fields of the object to be returned. If this is not specified all fields will be returned
+    in: query
+    required: false
+    schema:
+      type: string
+      example: boo bar
+
+  sort:
+    name: sort
+    description: The orders in which the results must be ordered
+    in: query
+    required: false
+    schema:
+      type: string
+      example: boo:asc foo:desc
+    
+
+  limit:
+    name: limit
+    description: The number of documents to return in the result set.
+    in: query
+    required: false
+    default: 50
+    schema:
+      type: integer
+      minimum: 1
+      maximun: 1000
+      example: 50
+
+  skip:
+    name: skip
+    description: The number of documents to skip in the results set.
+    in: query
+    required: false
+    default: 0
+    schema:
+      type: integer
+      minimum: 0
+      maximun: 1000
+      example: 50
+
+  defaultOperator:
+    name: defaultOperator
+    description: The default operator used for joining multiple filter conditions
+    in: query
+    required: false
+    schema:
+      type: string
+      enum:
+        - OR
+        - AND
+      example: OR
+    default: 'OR'
+
+
+    
