@@ -1,6 +1,6 @@
 {
   "name": "unified-queryparams",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Unique Queryparams sintax (Inspired in Elastic Search) that creates queries Elastic Search and MongoDB",
   "scripts": {
     "test": "set NODE_ENV=test&& mocha"
