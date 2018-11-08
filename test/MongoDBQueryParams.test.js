@@ -156,7 +156,7 @@ describe('MongoDBQueryParams', () => {
             });
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
-            mongoDbQueryParams.filter.number.should.be.eql('4');
+            mongoDbQueryParams.filter.number.should.be.eql(4);
         });
 
         it('should create a value search with the ":" and a date value', async function () {
@@ -165,7 +165,7 @@ describe('MongoDBQueryParams', () => {
             });
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('created_at');
-            mongoDbQueryParams.filter.created_at.should.be.eql('2018-10-04T09:21:36.676Z');
+            mongoDbQueryParams.filter.created_at.should.be.eql(new Date('2018-10-04T09:21:36.676Z'));
         });
 
         it('should accept a search with the ":" and a nested field', async function () {
@@ -184,7 +184,7 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$eq');
-            mongoDbQueryParams.filter.number.$eq.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$eq.should.be.eql(4);
         });
 
         it('should create a $neq search with the ":!=" and a value', async function () {
@@ -194,7 +194,7 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$neq');
-            mongoDbQueryParams.filter.number.$neq.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$neq.should.be.eql(4);
         });
 
         it('should create a $gt search with the ":>" and a value', async function () {
@@ -204,7 +204,7 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$gt');
-            mongoDbQueryParams.filter.number.$gt.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$gt.should.be.eql(4);
         });
 
         it('should create a $gte search with the ":>=" and a value', async function () {
@@ -214,7 +214,7 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$gte');
-            mongoDbQueryParams.filter.number.$gte.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$gte.should.be.eql(4);
         });
 
         it('should create a $lt search with the ":<" and a value', async function () {
@@ -224,7 +224,7 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$lt');
-            mongoDbQueryParams.filter.number.$lt.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$lt.should.be.eql(4);
         });
 
         it('should create a $lte search with the ":<=" and a value', async function () {
@@ -234,12 +234,52 @@ describe('MongoDBQueryParams', () => {
             mongoDbQueryParams.should.have.property('filter');
             mongoDbQueryParams.filter.should.have.property('number');
             mongoDbQueryParams.filter.number.should.have.property('$lte');
-            mongoDbQueryParams.filter.number.$lte.should.be.eql('4');
+            mongoDbQueryParams.filter.number.$lte.should.be.eql(4);
         });
 
         it('should throw an error if does not use the apropiate format', async function () {
             const fn = () => new MongoDBQueryParams({
                 filter: 'number: 4 for:bar:so'
+            })
+            fn.should.throw(InvalidQueryParamException);
+        });
+    });
+
+    describe(`defaultOperator`, () => {
+        it('should be optional', async function () {
+            const fn = () => new MongoDBQueryParams({})
+            fn.should.not.throw(InvalidQueryParamException);
+        });
+
+        it('should wrap the query in a $or operator if the default operator is OR', async function () {
+            const mongoDbQueryParams = new MongoDBQueryParams({
+                filter: 'name:==foo age:>=45 gender:==male',
+                defaultOperator: 'OR'
+            });
+            mongoDbQueryParams.should.have.property('filter');
+            mongoDbQueryParams.filter.should.have.property('$or');
+            mongoDbQueryParams.filter.$or.should.have.property('name');
+            mongoDbQueryParams.filter.$or.should.have.property('age');
+            mongoDbQueryParams.filter.$or.should.have.property('gender');
+        });
+
+        it('should return a standard query if the default operator is AND', async function () {
+            const mongoDbQueryParams = new MongoDBQueryParams({
+                filter: 'name:==foo age:>=45 gender:==male',
+                defaultOperator: 'AND'
+            });
+            mongoDbQueryParams.should.have.property('filter');
+            mongoDbQueryParams.filter.should.not.have.property('$or');
+            mongoDbQueryParams.filter.should.not.have.property('$and');
+            mongoDbQueryParams.filter.should.have.property('name');
+            mongoDbQueryParams.filter.should.have.property('age');
+            mongoDbQueryParams.filter.should.have.property('gender');
+        });
+
+        it('should throw an error if does not use the apropiate format', async function () {
+            const fn = () => new MongoDBQueryParams({
+                filter: 'name:==foo age:>=45 gender:==male',
+                defaultOperator: 'DDDSS'
             })
             fn.should.throw(InvalidQueryParamException);
         });

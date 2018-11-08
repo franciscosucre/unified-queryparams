@@ -1,6 +1,8 @@
 const InvalidQueryParamException = require("./exceptions/InvalidQueryParamException"),
   assert = require("assert"),
-  querystring = require("querystring");
+  querystring = require("querystring"),
+  AND = "AND",
+  OR = "OR";
 
 /**
  * Base implementation of the CRAF queryparams processing. It is inteded to be used as
@@ -114,11 +116,11 @@ class QueryParams {
    *
    * @throws InvalidQueryParamException
    * @returns
-   * @memberof ElasticSearchUriQueryParams
+   * @memberof QueryParams
    */
   getDefaultOperator() {
     try {
-      var defaultOperator = this.rawData.defaultOperator || "AND";
+      var defaultOperator = this.rawData.defaultOperator || AND;
       assert(
         typeof defaultOperator === "string" || defaultOperator instanceof String
       );
@@ -329,7 +331,8 @@ class MongoDBQueryParams extends QueryParams {
     this.sort = this.getSort();
     this.skip = this.getSkip();
     this.limit = this.getLimit();
-    this.filter = this.getQuery();
+    (this.defaultOperator = this.getDefaultOperator()),
+      (this.filter = this.getQuery());
     this.query = this.getQuery();
     this.fields = this.getFields();
   }
@@ -426,7 +429,7 @@ class MongoDBQueryParams extends QueryParams {
       if (rawFilter.trim() != "") {
         filterElements = rawFilter.split(" ");
       }
-      return filterElements.reduce((filter, current) => {
+      let filter = filterElements.reduce((filter, current) => {
         /* We use a regular expression to obtain the parts of our order */
         var result = this.filterRegExp.exec(current);
         if (!result) {
@@ -449,12 +452,14 @@ class MongoDBQueryParams extends QueryParams {
           let field = result[1],
             value = result[2],
             isNumber = !isNaN(parseFloat(value)),
-            isDate = !isNaN(Date.parse(value)),
-            isBoolean = (value == "true") || (value == "false");
-          if (isNumber) {
-            value = parseFloat(value);
-          } else if (isDate) {
+            isDate = isNaN(value) && !isNaN(Date.parse(new Date(value))),
+            isBoolean = value == "true" || value == "false";
+          /* When parsing dates, all numbers all considered dates but not all dates are
+            considered numbers, so we give presedence to the date parser */
+          if (isDate) {
             value = new Date(value);
+          } else if (isNumber) {
+            value = parseFloat(value);
           } else if (isBoolean) {
             value = value == "true" ? true : false;
           } else {
@@ -468,7 +473,7 @@ class MongoDBQueryParams extends QueryParams {
             value = result[3],
             isNumber = !isNaN(parseFloat(value)),
             isDate = !isNaN(Date.parse(value)),
-            isBoolean = (value == "true") || (value == "false");
+            isBoolean = value == "true" || value == "false";
           if (isNumber) {
             value = parseFloat(value);
           } else if (isDate) {
@@ -485,6 +490,14 @@ class MongoDBQueryParams extends QueryParams {
         }
         return filter;
       }, {});
+      /* Filters in MongoDB are consired as AND by default, so we only add the case
+      where de defaultOperator is OR */
+      if (this.defaultOperator === OR) {
+        return {
+          $or: filter
+        };
+      }
+      return filter;
     } catch (error) {
       throw new InvalidQueryParamException("filter", rawFilter);
     }
