@@ -18,7 +18,7 @@ Abstract class meant to be used as a super class for specific queryparam impleme
 - **skip:** Number. Used for pagination. Defines how many documents of the result query must be skipped before returing the objects.
 - **limit:** Number. Used for pagination. Defines how many documents can fit in the result set.
 - **fields:** String. Used for projection. Defines which fields of the objects must be returned. Useful for optimizing queries.
-- **defaultOperator:** String. Elastic Search Exclusive. Defines how consecutive filters should be interpreted. Values: "AND", "OR". Default: "AND".
+- **defaultOperator:** String. Elastic Search Exclusive. Defines how consecutive filters should be interpreted. Values: **"AND"**, **"OR"**. **Default:** **"AND"**.
 - **sort:** String. Used for sorting.
 - **filter:** String. Used for filtering the query.
 
@@ -32,6 +32,7 @@ Abstract class meant to be used as a super class for specific queryparam impleme
 
 
 **filter Sintax**
+----------
 The sintax is very similar to elastic search. There are 3 types of filters:
 
 - Text Search: `<field> <field>`
