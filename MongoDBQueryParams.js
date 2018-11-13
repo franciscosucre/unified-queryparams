@@ -113,78 +113,9 @@ class MongoDBQueryParams extends QueryParams {
       var rawFilter = this.rawData.filter || "";
       assert(typeof rawFilter === "string" || rawFilter instanceof String);
       rawFilter = rawFilter.trim();
-      var filterElements = [];
-      if (rawFilter.trim() != "") {
-        filterElements = rawFilter.split(" ");
-      }
-      let filter = filterElements.reduce((filter, current) => {
-        /* We use a regular expression to obtain the parts of our order */
-        var result = this.filterRegExp.exec(current);
-        if (!result) {
-          throw new InvalidQueryParamException("filter", rawFilter);
-        }
-        /* Exec returns undefined results sometimes so we clean them */
-        result = result.filter(value => value != null);
-        const field = result[1];
-        if (result.length == 2) {
-          /* CASE 1: Text Search Operation */
-          if (!filter["$text"]) {
-            filter["$text"] = {
-              $search: field
-            };
-          } else {
-            filter["$text"]["$search"] += ` ${field}`;
-          }
-        } else if (result.length == 3) {
-          /* CASE 2: Exact match query */
-          let field = result[1],
-            value = result[2],
-            isNumber = !isNaN(parseFloat(value)),
-            isDate = isNaN(value) && !isNaN(Date.parse(new Date(value))),
-            isBoolean = value == "true" || value == "false";
-          /* When parsing dates, all numbers all considered dates but not all dates are
-              considered numbers, so we give presedence to the date parser */
-          if (isDate) {
-            value = new Date(value);
-          } else if (isNumber) {
-            value = parseFloat(value);
-          } else if (isBoolean) {
-            value = value == "true" ? true : false;
-          } else {
-            value = new RegExp(value, "i");
-          }
-          filter[field] = value;
-        } else if (result.length == 4) {
-          /* CASE 3: Operator */
-          let field = result[1],
-            operator = result[2],
-            value = result[3],
-            isNumber = !isNaN(parseFloat(value)),
-            isDate = !isNaN(Date.parse(value)),
-            isBoolean = value == "true" || value == "false";
-          if (isNumber) {
-            value = parseFloat(value);
-          } else if (isDate) {
-            value = new Date(value);
-          } else if (isBoolean) {
-            value = value == "true" ? true : false;
-          } else {
-            value = new RegExp(value, "i");
-          }
-          filter[field] = {};
-          filter[field][this.mapToMongoOperator(operator)] = value;
-        } else {
-          throw new InvalidQueryParamException("filter", rawFilter);
-        }
-        return filter;
-      }, {});
-      /* Filters in MongoDB are consired as AND by default, so we only add the case
-        where de defaultOperator is OR */
-      if (this.defaultOperator === this.OR) {
-        return {
-          $or: filter
-        };
-      }
+      if (!rawFilter) return {};
+      const parser = require("./parser");
+      const [filter] = parser.parse(rawFilter);
       return filter;
     } catch (error) {
       throw new InvalidQueryParamException("filter", rawFilter);
