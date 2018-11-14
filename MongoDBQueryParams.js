@@ -1,7 +1,8 @@
 const assert = require("assert"),
   QueryParams = require("./QueryParams"),
-  InvalidQueryParamException = require("./exceptions/InvalidQueryParamException");
-
+  InvalidQueryParamException = require("./exceptions/InvalidQueryParamException"),
+  nearley = require("nearley"),
+  grammar = require("./parser/grammar.js");
 /**
  * Implementation of the CRAF queryparams processing for the MongoDB driver.
  *
@@ -114,8 +115,8 @@ class MongoDBQueryParams extends QueryParams {
       assert(typeof rawFilter === "string" || rawFilter instanceof String);
       rawFilter = rawFilter.trim();
       if (!rawFilter) return {};
-      const parser = require("./parser");
-      const [filter] = parser.parse(rawFilter);
+      const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+      const [filter] = parser.feed(rawFilter).results;
       return filter;
     } catch (error) {
       throw new InvalidQueryParamException("filter", rawFilter);

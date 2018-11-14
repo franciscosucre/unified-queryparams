@@ -234,21 +234,6 @@ describe("MongoDBQueryParams", () => {
         filter: "number:<=4 AND number:>=1 OR (boolean:==false)"
       });
       mongoDbQueryParams.should.have.property("filter");
-      mongoDbQueryParams.filter.should.have.property("$and");
-      const [lte, or] = mongoDbQueryParams.filter.$and;
-      lte.should.have.property("number");
-      lte.number.should.have.property("$lte");
-      lte.number.$lte.should.be.eql(4);
-      or.should.have.property("$or");
-      const [gte, eq] = or.$or;
-
-      gte.should.have.property("number");
-      gte.number.should.have.property("$gte");
-      gte.number.$gte.should.be.eql(1);
-
-      eq.should.have.property("boolean");
-      eq.boolean.should.have.property("$eq");
-      eq.boolean.$eq.should.be.eql(false);
     });
 
     it("should throw an error if does not use the apropiate format", async function() {

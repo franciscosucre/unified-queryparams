@@ -3,7 +3,8 @@
   "version": "0.5.2",
   "description": "Unique Queryparams sintax (Inspired in Elastic Search) that creates queries Elastic Search and MongoDB",
   "scripts": {
-    "test": "set NODE_ENV=test&& mocha"
+    "test": "set NODE_ENV=test&& mocha",
+    "compile-parser": "nearleyc parser/grammar.ne -o parser/grammar.js"
   },
   "repository": {
     "type": "git",
@@ -13,7 +14,9 @@
     "name": "Francisco Javier Sucre González",
     "email": "franciscojsucreg@gmail.com"
   },
-  "dependencies": {},
+  "dependencies": {
+    "nearley": "^2.15.1"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.0",
