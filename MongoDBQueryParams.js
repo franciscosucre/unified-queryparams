@@ -47,7 +47,7 @@ class MongoDBQueryParams extends QueryParams {
       case "==":
         return "$eq";
       case "!=":
-        return "$neq";
+        return "$ne";
     }
   }
 
