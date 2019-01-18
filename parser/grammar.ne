@@ -17,7 +17,7 @@ CONNECTOR -> "OR" {% function() { return "$or" } %}
 	| "AND" {% function() { return "$and" } %}
 
 OPERATOR -> ":==" {% function() { return "$eq" } %}
-	| ":!=" {% function() { return "$neq" } %}
+	| ":!=" {% function() { return "$ne" } %}
     | ":>=" {% function() { return "$gte" } %}
     | ":<=" {% function() { return "$lte" } %}
     | ":>" {% function() { return "$gt" } %}

@@ -30,7 +30,7 @@ var grammar = {
     {"name": "OPERATOR$string$1", "symbols": [{"literal":":"}, {"literal":"="}, {"literal":"="}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "OPERATOR", "symbols": ["OPERATOR$string$1"], "postprocess": function() { return "$eq" }},
     {"name": "OPERATOR$string$2", "symbols": [{"literal":":"}, {"literal":"!"}, {"literal":"="}], "postprocess": function joiner(d) {return d.join('');}},
-    {"name": "OPERATOR", "symbols": ["OPERATOR$string$2"], "postprocess": function() { return "$neq" }},
+    {"name": "OPERATOR", "symbols": ["OPERATOR$string$2"], "postprocess": function() { return "$ne" }},
     {"name": "OPERATOR$string$3", "symbols": [{"literal":":"}, {"literal":">"}, {"literal":"="}], "postprocess": function joiner(d) {return d.join('');}},
     {"name": "OPERATOR", "symbols": ["OPERATOR$string$3"], "postprocess": function() { return "$gte" }},
     {"name": "OPERATOR$string$4", "symbols": [{"literal":":"}, {"literal":"<"}, {"literal":"="}], "postprocess": function joiner(d) {return d.join('');}},

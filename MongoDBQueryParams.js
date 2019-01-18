@@ -27,31 +27,6 @@ class MongoDBQueryParams extends QueryParams {
   }
 
   /**
-   * Returns the corresponding mongodb operator based on the
-   * CRAF API operator
-   *
-   * @param {*} operator
-   * @returns
-   * @memberof MongoDBQueryParams
-   */
-  mapToMongoOperator(operator) {
-    switch (operator) {
-      case ">":
-        return "$gt";
-      case ">=":
-        return "$gte";
-      case "<":
-        return "$lt";
-      case "<=":
-        return "$lte";
-      case "==":
-        return "$eq";
-      case "!=":
-        return "$ne";
-    }
-  }
-
-  /**
    * Returns the corresponding mongodb sort direction value
    * based on the CRAF API direction
    *

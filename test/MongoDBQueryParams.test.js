@@ -179,14 +179,14 @@ describe("MongoDBQueryParams", () => {
       mongoDbQueryParams.filter.number.$eq.should.be.eql(4);
     });
 
-    it('should create a $neq search with the ":!=" and a value', async function() {
+    it('should create a $ne search with the ":!=" and a value', async function() {
       const mongoDbQueryParams = new MongoDBQueryParams({
         filter: "number:!=4"
       });
       mongoDbQueryParams.should.have.property("filter");
       mongoDbQueryParams.filter.should.have.property("number");
-      mongoDbQueryParams.filter.number.should.have.property("$neq");
-      mongoDbQueryParams.filter.number.$neq.should.be.eql(4);
+      mongoDbQueryParams.filter.number.should.have.property("$ne");
+      mongoDbQueryParams.filter.number.$ne.should.be.eql(4);
     });
 
     it('should create a $gt search with the ":>" and a value', async function() {
